@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bongabon Emergency Dispatch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        * { transition: all 0.2s ease-out; }
+        body { background-color: #020617; }
+
+        .step-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid #334155;
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        input, select, textarea, button {
+            min-height: 56px !important; 
+        }
+
+        .status-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .4; }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+
+<body class="text-slate-100 font-sans antialiased pb-10">
+<nav class="p-4 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-2xl mx-auto flex items-center justify-between">
+        <div>
+            <h1 class="text-xl font-black tracking-tighter text-red-500">
+                BONGABON <span class="text-white font-light">DRRM</span>
+            </h1>
+            <div class="flex items-center gap-2 mt-0.5">
+                <span class="w-2 h-2 bg-green-500 rounded-full status-pulse"></span>
+                <span id="headerClock" class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">00:00:00</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="tel:09525620223" class="bg-red-600 px-2.5 py-1.5 rounded-full text-[15px] font-black uppercase flex items-center gap-2 hover:bg-red-500 shadow-lg shadow-red-900/40">
+                CALL EMERGENCY
+            </a>
+
+            </br>
+            <a href="login.html" class="p-1.25 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-300 transition-all group" title="Personnel Login">
+             <svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 24 24"
+     fill="currentColor"
+     stroke="currentColor"
+     stroke-width="2"
+     class="w-8 h-8 text-white-600">
+  <circle cx="12" cy="7" r="4"/>
+  <path d="M4 22c0-4 4-7 8-7s8 3 8 7"/>
+</svg>
+            </a>
+            
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-2xl mx-auto px-4 py-6">
+
+    <header class="mb-6">
+        <div class="flex justify-between items-end">
+            <h2 class="text-3xl font-black text-white italic uppercase leading-none">Send Report</h2>
+            <span id="headerDate" class="text-[10px] font-black text-slate-500 uppercase tracking-tighter mb-1">MARCH 03, 2026</span>
+        </div>
+        <p class="text-slate-400 text-sm mt-2">Submit accurate details for immediate dispatch. Coordinates will be shared with emergency units.</p>
+    </header>
+
+    <form id="incidentForm" action="submit.php" method="POST" enctype="multipart/form-data" class="space-y-4">
+        
+        <input type="hidden" name="timestamp" id="timestamp">
+        <input type="hidden" name="lat" id="lat">
+        <input type="hidden" name="lng" id="lng">
+        <input type="hidden" name="accuracy" id="accuracy">
+        <input type="hidden" name="loc_method" id="loc_method" value="none">
+        
+        <input type="text" name="extra_check_field" class="hidden" tabindex="-1" autocomplete="off">
+
+        <div class="step-card border-l-4 border-l-white">
+            <label class="text-[10px] uppercase tracking-widest text-slate-400 font-black mb-3 block">1. Reporting Party</label>
+            <input type="tel" name="phone" id="phone" required placeholder="Mobile Number (09123456789)"
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 text-white focus:ring-2 focus:ring-white outline-none mb-2">
+            <p class="text-[10px] text-slate-500 italic">Dispatch will call this number to verify the report.</p>
+        </div>
+
+        <div class="step-card border-l-4 border-l-red-600">
+            <label class="text-[10px] uppercase tracking-widest text-slate-400 font-black mb-3 block">2. Nature of Emergency</label>
+            <select name="type" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 text-white focus:ring-2 focus:ring-red-600 outline-none mb-4">
+                <option value="">Select Incident Type...</option>
+                <option value="Vehicular Accident">Vehicular Accident (Road)</option>
+                <option value="Medical Emergency">Medical / Health Emergency</option>
+                <option value="Fire">Fire Outbreak</option>
+                <option value="Flash Flood">Flash Flood / Water Rescue</option>
+                <option value="Crime">Police Assistance Required</option>
+            </select>
+
+            <label class="text-[10px] uppercase tracking-widest text-slate-400 font-black mb-3 block text-center">Severity Level</label>
+            <div class="grid grid-cols-3 gap-2">
+                <label class="flex-1">
+                    <input type="radio" name="severity" value="Moderate" class="peer hidden" checked>
+                    <div class="h-12 flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900 peer-checked:bg-green-600/20 peer-checked:border-green-500 text-xs font-bold text-slate-500 peer-checked:text-green-500 transition-all uppercase">Moderate</div>
+                </label>
+                <label class="flex-1">
+                    <input type="radio" name="severity" value="High" class="peer hidden">
+                    <div class="h-12 flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900 peer-checked:bg-orange-600/20 peer-checked:border-orange-500 text-xs font-bold text-slate-500 peer-checked:text-orange-500 transition-all uppercase">High</div>
+                </label>
+                <label class="flex-1">
+                    <input type="radio" name="severity" value="Critical" class="peer hidden">
+                    <div class="h-12 flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900 peer-checked:bg-red-600/20 peer-checked:border-red-600 text-xs font-bold text-slate-500 peer-checked:text-red-500 transition-all uppercase">Critical</div>
+                </label>
+            </div>
+        </div>
+
+        <div class="step-card border-l-4 border-l-blue-500">
+            <label class="text-[10px] uppercase tracking-widest text-slate-400 font-black mb-3 block">3. Location Details</label>
+            
+            <button type="button" id="getLocation" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl mb-3 flex items-center justify-center shadow-lg shadow-blue-900/20">
+                TAG CURRENT LOCATION
+            </button>
+
+            <div id="manualLocation" class="hidden space-y-2 mb-4">
+                <p class="text-[11px] text-orange-400 font-bold uppercase italic">Signal weak. Enter location manually:</p>
+                <textarea name="address_manual" id="address_manual" placeholder="Street Name, Barangay, or Landmark (e.g., Near Santor Elementary)" 
+                    class="w-full bg-slate-800 border-2 border-orange-500/50 rounded-xl p-4 text-sm outline-none focus:border-orange-500"></textarea>
+            </div>
+
+            <div id="locFeedback" class="text-center mb-4">
+                <p id="locationStatus" class="text-[11px] text-slate-500 italic font-medium uppercase">GPS required for faster response</p>
+            </div>
+
+            <textarea name="description" placeholder="Describe the scene (Number of victims, landmarks, etc.)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none" rows="2"></textarea>
+        </div>
+
+        <div class="step-card border-l-4 border-l-yellow-500">
+            <label class="text-[10px] uppercase tracking-widest text-slate-400 font-black mb-3 block">4. Photo Evidence (Optional)</label>
+            <label class="flex flex-col items-center justify-center w-full border-2 border-dashed border-slate-700 rounded-2xl p-4 hover:border-yellow-500 cursor-pointer bg-slate-900/50">
+                <div class="flex flex-col items-center justify-center py-2 text-center">
+                    <p class="text-sm font-bold text-slate-300 uppercase" id="photoStatus">Activate Camera</p>
+                    <p class="text-[10px] text-slate-500 uppercase mt-1">Capture incident image</p>
+                </div>
+                <input type="file" name="incident_photo" accept="image/*" capture="environment" class="hidden" id="photoInput">
+            </label>
+        </div>
+
+        <div class="p-3 bg-red-900/10 border border-red-900/30 rounded-xl mb-4 text-center">
+            <p class="text-[10px] text-red-400 leading-tight italic">
+                False reporting is a crime. Your Phone Number, GPS, and Dispatch Time are logged.
+            </p>
+        </div>
+
+        <button id="submitBtn" type="submit" class="w-full bg-red-600 hover:bg-red-500 text-white font-black text-xl rounded-2xl py-4 shadow-xl shadow-red-900/40 active:scale-95 transition-transform uppercase">
+            Transmit Report
+        </button>
+
+    </form>
+</main>
+
+<script>
+    // Real-Time Header Update Function
+    function updateHeaderInfo() {
+        const now = new Date();
+        
+        // Update Clock
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('headerClock').textContent = `${hours}:${minutes}:${seconds}`;
+        
+        // Update Date
+        const options = { month: 'long', day: '2-digit', year: 'numeric' };
+        document.getElementById('headerDate').textContent = now.toLocaleDateString('en-US', options).toUpperCase();
+        
+        // Sync Hidden Field
+        document.getElementById("timestamp").value = now.toISOString();
+    }
+
+    // Run Clock
+    setInterval(updateHeaderInfo, 1000);
+    updateHeaderInfo();
+
+    const form = document.getElementById("incidentForm");
+    const locationBtn = document.getElementById("getLocation");
+    const manualDiv = document.getElementById("manualLocation");
+    const status = document.getElementById("locationStatus");
+    const submitBtn = document.getElementById("submitBtn");
+    const startTime = Date.now();
+
+    locationBtn.addEventListener("click", () => {
+        locationBtn.disabled = true;
+        updateLocStatus("ACQUIRING SATELLITE SIGNAL...", "text-blue-400 status-pulse");
+
+        if (!navigator.geolocation) {
+            handleLocFailure("Geolocation not supported");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                document.getElementById("lat").value = pos.coords.latitude;
+                document.getElementById("lng").value = pos.coords.longitude;
+                document.getElementById("accuracy").value = pos.coords.accuracy;
+                document.getElementById("loc_method").value = "gps";
+
+                const accuracy = Math.round(pos.coords.accuracy);
+                updateLocStatus(`POSITION SECURED (ACCURACY: ${accuracy}M)`, "text-green-400");
+                
+                locationBtn.innerHTML = "LOCATION VERIFIED";
+                locationBtn.className = "w-full bg-green-600 text-white font-black rounded-xl mb-3";
+                locationBtn.disabled = false;
+                manualDiv.classList.add("hidden");
+
+                if ("vibrate" in navigator) navigator.vibrate(100);
+            },
+            (err) => {
+                handleLocFailure("GPS FAILED. PROVIDE ADDRESS MANUALLY.");
+            },
+            { enableHighAccuracy: true, timeout: 12000 }
+        );
+    });
+
+    function handleLocFailure(msg) {
+        document.getElementById("loc_method").value = "manual";
+        updateLocStatus(msg, "text-orange-400 font-bold");
+        locationBtn.classList.add("hidden");
+        manualDiv.classList.remove("hidden");
+        document.getElementById("address_manual").required = true;
+        locationBtn.disabled = false;
+    }
+
+    function updateLocStatus(text, classes) {
+        status.textContent = text;
+        status.className = `text-[11px] italic font-medium ${classes}`;
+    }
+
+    document.getElementById("photoInput").addEventListener("change", function(){
+        if(this.files.length > 0){
+            document.getElementById("photoStatus").textContent = "IMAGE READY: " + this.files[0].name.toUpperCase();
+            document.getElementById("photoStatus").classList.add("text-green-400");
+        }
+    });
+
+    form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    // Get coordinates from your GPS logic and append
+    formData.append('lat', currentLat); 
+    formData.append('lng', currentLng);
+
+    fetch('api/submit_incident.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === 'success') alert("Emergency Broadcast Sent!");
+    });
+
+
+        if (phone.length < 11) {
+            alert("Please enter a valid 11-digit mobile number.");
+            e.preventDefault();
+            return;
+        }
+
+        if (method === "none") {
+            alert("Please tag your location or provide an address.");
+            e.preventDefault();
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="status-pulse">TRANSMITTING...</span>`;
+        if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]);
+    });
+</script>
+
+</body>
+</html>
