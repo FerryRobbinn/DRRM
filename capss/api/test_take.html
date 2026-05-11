@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Take Incident</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Test Take Incident API</h2>
+    <button id="testBtn">Test Take Incident (ID: 14)</button>
+    <pre id="result"></pre>
+
+    <script>
+    $(document).ready(function() {
+        $('#testBtn').click(function() {
+            $.ajax({
+                url: 'take_incident.php',
+                method: 'POST',
+                data: { incident_id: 14 },
+                dataType: 'json',
+                success: function(response) {
+                    $('#result').text(JSON.stringify(response, null, 2));
+                },
+                error: function(xhr, status, error) {
+                    $('#result').text('Error: ' + error + '\nResponse: ' + xhr.responseText);
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
